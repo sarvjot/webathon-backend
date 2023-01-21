@@ -18,10 +18,10 @@ const EventSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Entry"			
 	}],
-	accepted: {
-		type: Boolean,
-		required: [true, "Accepted property is missing"],
-	},
+	accepted: [{
+		type: Schema.Types.ObjectId,
+		ref: "User",
+	}],
 	countRequired: {
 		type: Number,
 		required: [true, "Count-Required property is missing"],
