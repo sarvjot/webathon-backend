@@ -1,6 +1,7 @@
-import mongoose, { Schema } from "mongoose"
-import bcrypt from "bcrypt"
-import validator from "validator"
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const bcrypt = require("bcrypt")
+const validator = require("validator")
 
 const { isStrongPassword } = validator
 
@@ -26,5 +27,5 @@ UserSchema.pre("save", async function(next) {
 
 const User = mongoose.model("user", UserSchema)
 
-export default User
 
+module.exports.User = User

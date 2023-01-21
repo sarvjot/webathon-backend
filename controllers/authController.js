@@ -1,8 +1,9 @@
-import User from "../models/User";
-import bcrypt from "bcrypt";
+const User = require("../models/User").User;
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-const generateToken = (user) => {
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+const generateToken = async (user) => {
+  const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
   return token;
@@ -10,11 +11,15 @@ const generateToken = (user) => {
 
 const signUp = async (req, res) => {
   const { username, password } = req.body;
-  const user = new User({ username, password });
   try {
+    const check = await User.findOne({ username });
+    if (check) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+    const user = new User({ username, password });
     await user.save();
-    const token = generateToken(user);
-    res.status(201).send({ token });
+    const token = await generateToken(user);
+    return res.status(201).json({ token });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -31,10 +36,10 @@ const signIn = async (req, res) => {
     if (!isMatch) {
       return res.status(400).send({ error: "Invalid username or password" });
     }
-    const token = generateToken(user);
-    res.status(200).send({ token });
+    const token = await generateToken(user);
+    res.status(200).json({ token });
   } catch (error) {
-    res.status(400).send
+    res.status(400).json({ message: "Invalid Username or password" })
   }
 }
 
@@ -57,4 +62,7 @@ const validateToken = async (req, res, next) => {
   next();
 }
 
-export { signUp, signIn, validateToken };
+module.exports.signUp = signUp
+module.exports.signIn = signIn
+module.exports.validateToken = validateToken
+
