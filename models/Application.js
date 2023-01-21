@@ -1,12 +1,12 @@
 import mongoose, {Schema} from "mongoose"
 
-const EntrySchema = new Schema({
+const ApplicationSchema = new Schema({
 	applicant: {
 		type: mongoose.Types.ObjectId,
 		ref: "User",
 		required: [true, "Applicant is missing"],
 	}, 
-	appliedEvent: {
+	event: {
 		type: mongoose.Types.ObjectId,
 		ref: "Event",
 		required: [true, "Event is missing"],
@@ -17,6 +17,6 @@ const EntrySchema = new Schema({
 })
 
 
-const Entry = mongoose.model("entry", EntrySchema)
+const Application = mongoose.model("application", ApplicationSchema)
 
-export default Entry
+export default Application
