@@ -8,6 +8,7 @@ const authController = require('./controllers/authController');
 // express json
 app.use(require('express').json());
 const EventRouter = require('./routes/Event');
+const ApplicationRouter = require('./routes/Application');
 
 const io = require('socket.io')(http, {
   cors: { origin: "*" },
@@ -15,7 +16,9 @@ const io = require('socket.io')(http, {
 })
 
 app.use('/event', EventRouter);
-
+app.post('/signUp', authController.signUp);
+app.post('/signIn', authController.signIn);
+app.use('/application',ApplicationRouter);
 mongoose.connect(
   process.env.DB_CONNECTION,
   {
@@ -28,13 +31,7 @@ mongoose.connection.on("connected", () => {
   console.log("Connected to DB");
 });
 
-
-
 const port = process.env.PORT || 8000;
-
-app.post('/signUp', authController.signUp);
-app.post('/signIn', authController.signIn);
-
 
 server.listen(port, function() {
   console.log(`Listening on port ${port}`);

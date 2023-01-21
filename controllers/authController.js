@@ -57,7 +57,7 @@ const validateToken = async (req, res, next) => {
     req.user = user;
   }
   catch (error) {
-    res.status(400).send({ error: "Invalid token" });
+    return res.status(400).send({ error: "Invalid token" });
   }
   next();
 }
