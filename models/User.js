@@ -14,7 +14,8 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "Password is missing"],
     validate: [isStrongPassword, "Password not strong enough"],
-  }
+  },
+
 })
 
 UserSchema.pre("save", async function(next) {
