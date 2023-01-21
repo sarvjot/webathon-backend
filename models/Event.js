@@ -5,26 +5,26 @@ const EventSchema = new Schema({
 		type: String,
 		required: [true, "Event Name is missing"],
 	},
-	poster: {
+	author: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
-		required: [true, "Event Poster is missing"],
+		required: [true, "Event author is missing"],
 	}, 
 	description: {
 		type: String,
 		required: [true, "Description is missing"],
 	}, 
-	entries : [{
+	applications : [{
 		type: Schema.Types.ObjectId,
-		ref: "Entry"			
+		ref: "Application"			
 	}],
-	accepted: [{
+	usersAccepted: [{
 		type: Schema.Types.ObjectId,
 		ref: "User",
 	}],
-	countRequired: {
+	usersRequired: {
 		type: Number,
-		required: [true, "Count-Required property is missing"],
+		required: [true, "Users-required property is missing"],
 	}
 })
 
