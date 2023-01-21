@@ -7,4 +7,10 @@ Router.get('/', async (req, res) => {
   res.send(events);
 });
 
+Router.get('/:id', async (req, res) => {
+  const event = await Event.findById(req.params.id);
+  const authorData = await User.findById(event.author);
+  res.send({ event, authorData });
+})
+
 
