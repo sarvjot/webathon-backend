@@ -4,6 +4,13 @@ const Event = require('../models/Event');
 
 const getApplication = async (req, res) => {
   const applications = await Application.find({ event: req.params.eventId })
+  const event = await Event.findById(req.params.eventId);
+  if (!event) {
+    return res.status(404).send({ error: 'Event not found' });
+  }
+  if (event.author.toString() != req.user._id.toString()) {
+    return res.status(401).send({ error: 'Unauthorized' });
+  }
   res.send(applications);
 }
 
@@ -16,14 +23,12 @@ const postApplication = async (req, res) => {
   if (!event) {
     return res.status(404).send({ error: 'Event not found' });
   }
-  if (Application.exists({
-    applicant: applicant._id,
-    event: event._id
-  }) != null) {
-    // console.log(Application.findOne({
-    //   applicant: applicant._id,
-    //   event: event._id
-    // }))
+  if (event.usersAccepted.includes(applicant._id)) {
+    return res.status(400).send({ error: 'You have been accepted to this event' });
+  }
+  const application = await Application.findOne({ applicant: applicant._id, event: event._id });
+  if (application) {
+    console.log(application)
     return res.status(400).send({ error: 'Application already exists' });
   }
   try {
@@ -60,25 +65,45 @@ const acceptApplication = async (req, res) => {
     return res.status(404).send({ error: 'Event not found' });
   }
   const user = req.user
-  if (event.author !== user._id) {
-    // console.log(event.author)
-    // console.log(user._id)
+
+  if (event.author.toString() !== user._id.toString()) {
     return res.status(401).send({ error: 'Unauthorized' });
   }
+
   if (event.usersAccepted.length >= event.usersRequired) {
     return res.status(400).send({ error: 'Event is full' });
   }
+
   try {
     event.usersAccepted.push(application.applicant);
     await event.save();
     application.delete();
     return res.status(200).send(event);
   } catch (error) {
-    // console.log(error);
     return res.status(400).send("Application accepting failed")
+  }
+}
+
+const rejectApplication = async (req, res) => {
+  const application = await Application.findById(req.params.applicationId);
+  if (!application) {
+    return res.status(404).send({ error: 'Application not found' });
+  }
+  const event = await Event.findById(application.event);
+  const user = req.user;
+  if (event.author.toString() !== user._id.toString()) {
+    return res.status(401).send({ error: 'Unauthorized' });
+  }
+  try {
+    await application.delete();
+    return res.status(200).send(application);
+  }
+  catch (error) {
+    return res.status(400).send("Application rejecting failed")
   }
 }
 
 exports.getApplication = getApplication;
 exports.acceptApplication = acceptApplication;
 exports.postApplication = postApplication;
+exports.rejectApplication = rejectApplication;
