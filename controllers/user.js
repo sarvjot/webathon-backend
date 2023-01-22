@@ -11,7 +11,10 @@ const getPartOf = async (req, res) => {
 const appliedEvents = async (req, res) => {
   const user = req.user;
   const unacceptedApplications = await Application.find({applicant: user._id});  
-  res.json(unacceptedApplications)
+  const allEvents = await Event.find({});
+  const unacceptedEvents = allEvents.filter(e => unacceptedApplications.map(application => application.event === e.id) );
+  console.log(unacceptedEvents);
+  res.send({applications: unacceptedApplications,events: unacceptedEvents});
 }
 
 exports.getPartOf = getPartOf;
