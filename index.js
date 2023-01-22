@@ -14,9 +14,11 @@ const server = require('http').createServer(app);
 const EventRouter = require('./routes/Event');
 const ApplicationRouter = require('./routes/Application');
 const AuthRouter = require('./routes/auth');
+const UserRouter = require('./routes/user');
 app.use('/event', EventRouter);
 app.use('/application', ApplicationRouter);
 app.use('/auth', AuthRouter);
+app.use('/user', UserRouter)
 
 mongoose.connect(
   process.env.DB_CONNECTION,
