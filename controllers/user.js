@@ -8,8 +8,11 @@ const getPartOf = async (req, res) => {
   res.send(events);
 }
 const anyTrues = (a)=>{
+  const flag = false
   a.forEach(t=>{
-    if(t) return true  })
+    if(t) flag = true
+  })
+  return flag
 }
 const appliedEvents = async (req, res) => {
   const user = req.user;
