@@ -12,10 +12,13 @@ const getApplication = async (req, res) => {
   if (event.author.toString() != req.user._id.toString()) {
     return res.status(401).send({ error: 'Unauthorized' });
   }
+  // get usernames into the applications object
+  const dataMap = {}
   for (var i = 0; i < applications.length; i++) {
-    applications[i].userName = await User.findById(applications[i].applicant);
+    const user = await User.findById(applications[i].applicant);
+    dataMap[applications[i].applicant] = user.username;
   }
-  res.send(applications);
+  res.send({ applications, dataMap });
 }
 
 const postApplication = async (req, res) => {
@@ -60,7 +63,8 @@ const postApplication = async (req, res) => {
 }
 
 const acceptApplication = async (req, res) => {
-  const application = await Application.findById(req.params.applicationId);
+  const application = await Application.findOne({ _id: req.params.applicationId });
+  console.log(application, req.params.applicationId)
   if (!application) {
     return res.status(404).send({ error: 'Application not found' });
   }
