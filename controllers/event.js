@@ -1,9 +1,18 @@
 const Router = require('express').Router();
 const Event = require('../models/Event');
 
+const sanitizeEvent = (event) => {
+  return {
+    _id: event._id,
+    eventName: event.eventName,
+    description: event.description,
+    usersRequired: event.usersRequired,
+    usersAccepted: event.usersAccepted.length,
+  };
+}
 const getEvents = async (req, res) => {
   const events = await Event.find();
-  res.send(events);
+  res.send(events.map(sanitizeEvent));
 };
 
 const getEventByUserId = async () => async (req, res) => {

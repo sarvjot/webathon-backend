@@ -1,24 +1,27 @@
 const app = require('express')();
-const server = require('http').createServer(app);
-const http = require('http').createServer(app);
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors')
 dotenv.config();
-const authController = require('./controllers/authController');
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}))
 // express json
 app.use(require('express').json());
+
+// const io = require('socket.io')(http, {
+//   cors: { origin: "*" },
+//   path: '/api/events'
+// })
+
 const EventRouter = require('./routes/Event');
 const ApplicationRouter = require('./routes/Application');
-
-const io = require('socket.io')(http, {
-  cors: { origin: "*" },
-  path: '/api/events'
-})
-
+const AuthRouter = require('./routes/auth');
 app.use('/event', EventRouter);
-app.post('/signUp', authController.signUp);
-app.post('/signIn', authController.signIn);
-app.use('/application',ApplicationRouter);
+app.use('/application', ApplicationRouter);
+app.use('/auth', AuthRouter);
+
 mongoose.connect(
   process.env.DB_CONNECTION,
   {
@@ -31,8 +34,9 @@ mongoose.connection.on("connected", () => {
   console.log("Connected to DB");
 });
 
-const port = process.env.PORT || 8000;
 
+const port = process.env.PORT || 8000;
+const server = require('http').createServer(app);
 server.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
