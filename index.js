@@ -4,16 +4,12 @@ const mongoose = require('mongoose');
 const cors = require('cors')
 dotenv.config();
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: '*',
   credentials: true
 }))
 // express json
 app.use(require('express').json());
-
-// const io = require('socket.io')(http, {
-//   cors: { origin: "*" },
-//   path: '/api/events'
-// })
+const server = require('http').createServer(app);
 
 const EventRouter = require('./routes/Event');
 const ApplicationRouter = require('./routes/Application');
@@ -36,7 +32,6 @@ mongoose.connection.on("connected", () => {
 
 
 const port = process.env.PORT || 8000;
-const server = require('http').createServer(app);
 server.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
