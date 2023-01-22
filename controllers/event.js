@@ -15,8 +15,8 @@ const getEvents = async (req, res) => {
   res.send(events.map(sanitizeEvent));
 };
 
-const getEventByUserId = async () => async (req, res) => {
-  const author = req.params.userId;
+const getEventByUserId = async (req, res) => {
+  const author = req.user;
   const userEvents = await Event.find({ author: author });
   res.send({ userEvents, author });
 }

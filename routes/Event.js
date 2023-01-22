@@ -3,7 +3,7 @@ const eventControllers = require('../controllers/event');
 const authContoller = require('../controllers/authController');
 
 EventRouter.get('/', eventControllers.getEvents);
-EventRouter.get('/:userId', eventControllers.getEventByUserId);
+EventRouter.get('/user', authContoller.validateToken, eventControllers.getEventByUserId);
 EventRouter.post('/', authContoller.validateToken, eventControllers.addEvent);
 
 
