@@ -1,5 +1,6 @@
 const Application = require('../models/Application')
 const Event = require('../models/Event');
+const User = require('../models/User').User;
 
 
 const getApplication = async (req, res) => {
@@ -10,6 +11,9 @@ const getApplication = async (req, res) => {
   }
   if (event.author.toString() != req.user._id.toString()) {
     return res.status(401).send({ error: 'Unauthorized' });
+  }
+  for (var i = 0; i < applications.length; i++) {
+    applications[i].userName = await User.findById(applications[i].applicant);
   }
   res.send(applications);
 }
@@ -32,6 +36,7 @@ const postApplication = async (req, res) => {
     return res.status(400).send({ error: 'Application already exists' });
   }
   try {
+    console.log(req.body)
     if (req.body.message) {
       const newApplication = new Application({
         message: req.body.message,
